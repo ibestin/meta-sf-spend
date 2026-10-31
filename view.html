@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meta Ads to Salesforce Dashboard</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#1c2430;--mut:#6b7686;--line:#e2e6ec;--acc:#1f5eff;--head:#eef1f6;--warn:#b45309;--bad:#b91c1c;--ok:#15803d;--w1:190px;--w2:92px}
+@media(prefers-color-scheme:dark){:root{--bg:#12161c;--card:#1a2029;--ink:#e6eaf0;--mut:#93a0b2;--line:#2a323e;--acc:#6b9cff;--head:#222a35;--warn:#f0b35a;--bad:#f28b8b;--ok:#6ccf8e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;position:sticky;top:0;z-index:20}
+.row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+h1{font-size:16px;margin:0 8px 0 0}
+nav{display:flex;gap:4px}
+nav button,.pill{border:1px solid var(--line);background:transparent;color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit}
+nav button.on,.pill.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.bar{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+select,input[type=date],input[type=search]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+label.chk{display:flex;gap:5px;align-items:center;color:var(--mut);cursor:pointer}
+button.btn{font:inherit;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer}
+button.btn:hover{border-color:var(--acc)}
+main{padding:14px 16px}
+footer{padding:10px 16px 24px;color:var(--mut);font-size:12px}
+.note{color:var(--mut);margin:0 0 10px}
+.banner{background:rgba(180,83,9,.1);border:1px solid var(--warn);color:var(--warn);padding:8px 12px;border-radius:6px;margin-bottom:10px}
+.scroller{overflow:auto;max-height:calc(100vh - 215px);border:1px solid var(--line);border-radius:8px;background:var(--card)}
+table.g{border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:13px;font-variant-numeric:tabular-nums}
+.g th,.g td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--card)}
+.g thead th{position:sticky;top:0;z-index:3;background:var(--head);font-weight:600;line-height:1.2}
+.g thead th small{display:block;font-weight:400;color:var(--mut);font-size:11px}
+.g .c1{position:sticky;left:0;z-index:2;text-align:left}
+.g .c2{position:sticky;left:var(--w1);z-index:2;border-right:1px solid var(--line);font-weight:600}
+.g thead .c1,.g thead .c2{z-index:4}
+.g tr.cost td{color:var(--mut)}
+.g tr.cost td.c2{color:var(--ink)}
+.g td.na{color:var(--mut);font-weight:400}
+.g tr.adrow td{background:var(--head);border-bottom:none;padding-top:8px}
+.g tr.adrow .c1{white-space:normal}
+.adn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ads,.sum{color:var(--mut);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sum b{color:var(--ink);font-weight:600}
+.g tbody.blk tr:last-child td{border-bottom:2px solid var(--line)}
+.tools{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:10px}
+.tools input[type=search]{min-width:260px}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:12px;position:relative}
+.lg{display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:4px}
+.lg button{border:0;background:none;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;font:inherit;padding:2px 4px}
+.lg button.off{opacity:.4;text-decoration:line-through}
+.sw{width:18px;height:3px;border-radius:2px;display:inline-block}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.18);display:none;z-index:5;white-space:nowrap}
+.tip b{display:block;margin-bottom:2px}
+.empty{padding:40px;text-align:center;color:var(--mut)}
+</style>
+</head>
+<body>
+<header>
+  <div class="row">
+    <h1>Meta Ads &rarr; Salesforce</h1>
+    <nav id="tabs"></nav>
+    <div class="bar" id="rangeBar"></div>
+  </div>
+</header>
+<main id="main"></main>
+<footer id="foot"></footer>
+
+<script>
+(function(){
+'use strict';
+
+const DATA_URL='data/data.json';
+const MAXD=400;               // max date columns rendered
+const CHUNK=20;               // ad blocks rendered per scroll step
+
+/* ---------- State ---------- */
+const S={tab:'dash',dash:'daily',preset:'last30',from:'',to:'',newest:false,search:'',sort:'spend',hideInactive:true,load:'loading',err:'',meta:null};
+let D=null;
+const PK='metaSfView.prefs.v1';
+const PKEYS=['tab','dash','preset','from','to','newest','sort','hideInactive'];
+function loadPrefs(){try{const p=JSON.parse(localStorage.getItem(PK)||'{}');for(const k of PKEYS)if(k in p)S[k]=p[k];}catch(e){}}
+function savePrefs(){try{const o={};for(const k of PKEYS)o[k]=S[k];localStorage.setItem(PK,JSON.stringify(o));}catch(e){}}
+
+/* ---------- Helpers ---------- */
+const $=(s,r)=>(r||document).querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf=new Intl.NumberFormat('en-IN',{maximumFractionDigits:0});
+const p2=n=>String(n).padStart(2,'0');
+function today(){return new Date(Date.now()+330*60000).toISOString().slice(0,10);}
+function addDays(d,n){return new Date(Date.parse(d+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);}
+function dayDiff(a,b){return Math.round((Date.parse(a+'T00:00:00Z')-Date.parse(b+'T00:00:00Z'))/864e5);}
+function dateList(f,t){const o=[];for(let d=f;d<=t;d=addDays(d,1))o.push(d);return o;}
+function fmtDT(ms){const d=new Date(ms+330*60000);return d.getUTCDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()]+' '+d.getUTCFullYear()+', '+p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+' IST';}
+
+/* ---------- Load published data ---------- */
+// metric index: 0 spend, 1 leads, 2 fresh, 3 qualified, 4 test drives, 5 invalid leads
+function buildModel(p){
+  const ads=new Map(),G={};let min=null,max=null;
+  p.ads.forEach((a,i)=>{
+    const days={};
+    for(const d in (a.days||{})){
+      const c=a.days[d];if(!Array.isArray(c))continue;
+      const v=[0,0,0,0,0,0];for(let k=0;k<6;k++)v[k]=+c[k]||0;
+      days[d]=v;
+      const g=G[d]||(G[d]=[0,0,0,0,0,0]);for(let k=0;k<6;k++)g[k]+=v[k];
+      if(min===null||d<min)min=d;if(max===null||d>max)max=d;
+    }
+    ads.set(String(i),{ad:String(a.ad||''),adset:String(a.adset||''),campaign:String(a.campaign||''),days});
+  });
+  const av=Array.isArray(p.avail)&&p.avail.length===6?p.avail.map(Boolean):[true,true,false,false,false,false];
+  return {ads,G,min,max,av};
+}
+async function load(){
+  S.load='loading';render();
+  try{
+    const r=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store'});
+    if(r.status===404){S.load='none';D=null;render();return;}
+    if(!r.ok)throw new Error('Could not load the data (HTTP '+r.status+').');
+    let p;try{p=await r.json();}catch(e){throw new Error('The data file is not valid JSON.');}
+    if(!p||p.schema!==1||!Array.isArray(p.ads))throw new Error('The data file has an unexpected format.');
+    D=buildModel(p);S.meta={generatedAt:+p.generatedAt||0};S.load='ok';
+  }catch(e){
+    S.load='error';D=null;
+    S.err=(e&&e.message)||String(e);
+    if(location.protocol==='file:')S.err+=' This page must be opened from GitHub Pages (or a web server), not directly from a file.';
+  }
+  render();
+}
+function avail(){return D?D.av:[false,false,false,false,false,false];}
+
+/* ---------- Date range ---------- */
+function presetRange(p){
+  const t=today();
+  switch(p){
+    case 'today':return [t,t];
+    case 'yesterday':{const y=addDays(t,-1);return [y,y];}
+    case 'last7':return [addDays(t,-6),t];
+    case 'last30':return [addDays(t,-29),t];
+    case 'month':return [t.slice(0,8)+'01',t];
+    case 'lastmonth':{const e=addDays(t.slice(0,8)+'01',-1);return [e.slice(0,8)+'01',e];}
+    case 'all':return D&&D.min?[D.min,D.max]:[t,t];
+    default:return [S.from,S.to];
+  }
+}
+function curRange(){
+  let [f,t]=presetRange(S.preset);
+  if(!f||!t){[f,t]=presetRange('last30');}
+  if(f>t){const x=f;f=t;t=x;}
+  let clamped=false;
+  if(dayDiff(t,f)>=MAXD){f=addDays(t,-(MAXD-1));clamped=true;}
+  return {from:f,to:t,clamped};
+}
+
+/* ---------- Formatting ---------- */
+const dow=d=>['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(d+'T00:00:00Z').getUTCDay()];
+const dlabel=d=>(+d.slice(8))+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+d.slice(5,7)-1];
+function val(def,arr,av){
+  if(def.cost){
+    if(!av[def.n]||!av[def.dn])return 'n/a';
+    return arr[def.n]>0&&arr[def.dn]>0?nf.format(arr[def.n]/arr[def.dn]):'–';
+  }
+  if(!av[def.i])return 'n/a';
+  return arr[def.i]>0?nf.format(arr[def.i]):'–';
+}
+const cellHTML=(cls,s)=>'<td'+(cls||s==='n/a'?' class="'+((cls||'')+(s==='n/a'?' na':'')).trim()+'"':'')+'>'+s+'</td>';
+function colgroup(n){return '<colgroup><col style="width:var(--w1)"><col style="width:var(--w2)">'+'<col style="width:68px">'.repeat(n)+'</colgroup>';}
+function tableWidth(n){return 'calc(var(--w1) + var(--w2) + '+(n*68)+'px)';}
+function headHTML(ord,first){
+  return '<thead><tr><th class="c1">'+first+'</th><th class="c2">Total</th>'+ord.map(d=>'<th>'+dlabel(d)+'<small>'+dow(d)+'</small></th>').join('')+'</tr></thead>';
+}
+
+/* ---------- Line chart (inline SVG, no libraries) ---------- */
+const CH=[{k:0,l:'Spend (₹)',c:'#E69F00',ax:'r',dash:'6 4'},{k:1,l:'Leads',c:'#0072B2',ax:'l'},{k:2,l:'Fresh Leads',c:'#009E73',ax:'l'},{k:5,l:'Invalid Leads',c:'#D55E00',ax:'l'},{k:3,l:'Qualified',c:'#CC79A7',ax:'l'}];
+const chartOff=new Set();let lastChart=null;
+function niceScale(v){
+  if(!(v>0))return {max:4,step:1};
+  const raw=v/4,mag=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/mag;
+  const st=(m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*mag;
+  return {step:st,max:st*Math.ceil(v/st-1e-9)};
+}
+function drawChart(el,dates,av){
+  lastChart={el,dates,av};
+  const W=Math.max(320,el.clientWidth-24),H=300,m={l:52,r:72,t:26,b:34},pw=W-m.l-m.r,ph=H-m.t-m.b,n=dates.length,zero=[0,0,0,0,0,0];
+  const series=CH.filter(s=>av[s.k]).map(s=>({...s,v:dates.map(d=>(D.G[d]||zero)[s.k]),off:chartOff.has(s.k)}));
+  const vis=series.filter(s=>!s.off);
+  const mx=ax=>Math.max(0,...vis.filter(s=>s.ax===ax).flatMap(s=>s.v));
+  const hasL=vis.some(s=>s.ax==='l'),hasR=vis.some(s=>s.ax==='r');
+  const L=niceScale(mx('l')),R=niceScale(mx('r'));
+  const x=i=>m.l+(n<=1?pw/2:pw*i/(n-1));
+  const yl=v=>m.t+ph-ph*v/L.max,yr=v=>m.t+ph-ph*v/R.max;
+  let g='';
+  const gridSc=hasL?L:R,gy=hasL?yl:yr;
+  for(let v=0;v<=gridSc.max+1e-9;v+=gridSc.step)g+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+gy(v)+'" y2="'+gy(v)+'" style="stroke:var(--line)"/>';
+  if(hasL)for(let v=0;v<=L.max+1e-9;v+=L.step)g+='<text x="'+(m.l-6)+'" y="'+(yl(v)+4)+'" text-anchor="end" font-size="11" fill="currentColor">'+nf.format(v)+'</text>';
+  if(hasR)for(let v=0;v<=R.max+1e-9;v+=R.step)g+='<text x="'+(W-m.r+6)+'" y="'+(yr(v)+4)+'" font-size="11" fill="currentColor">'+nf.format(v)+'</text>';
+  if(hasL)g+='<text x="4" y="11" font-size="11" fill="currentColor">Leads (count)</text>';
+  if(hasR)g+='<text x="'+(W-4)+'" y="11" font-size="11" text-anchor="end" fill="currentColor">Spend (₹)</text>';
+  const step=Math.max(1,Math.ceil(n/Math.max(1,Math.floor(pw/56))));
+  for(let i=0;i<n;i+=step)g+='<text x="'+x(i)+'" y="'+(H-12)+'" text-anchor="middle" font-size="11" fill="currentColor">'+dlabel(dates[i])+'</text>';
+  for(const s of vis){
+    const f=s.ax==='l'?yl:yr;
+    if(n>1)g+='<polyline fill="none" stroke="'+s.c+'" stroke-width="2" stroke-linejoin="round"'+(s.dash?' stroke-dasharray="'+s.dash+'"':'')+' points="'+s.v.map((v,i)=>x(i).toFixed(1)+','+f(v).toFixed(1)).join(' ')+'"/>';
+    if(n<=45)g+=s.v.map((v,i)=>'<circle cx="'+x(i).toFixed(1)+'" cy="'+f(v).toFixed(1)+'" r="2.5" fill="'+s.c+'"/>').join('');
+  }
+  el.innerHTML='<div class="lg">'+series.map(s=>'<button data-ch="'+s.k+'" class="'+(s.off?'off':'')+'" title="Click to show or hide"><span class="sw" style="background:'+s.c+'"></span>'+s.l+'</button>').join('')+'</div>'+
+    '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="color:var(--mut);display:block" role="img" aria-label="Daily spend and lead counts line chart">'+g+
+    '<line id="gl" y1="'+m.t+'" y2="'+(m.t+ph)+'" style="stroke:var(--mut);display:none"/><rect id="hv" x="'+m.l+'" y="'+m.t+'" width="'+pw+'" height="'+ph+'" fill="transparent"/></svg><div class="tip"></div>';
+  const svg=$('svg',el),tip=$('.tip',el),gl=$('#gl',el);
+  $('#hv',el).addEventListener('mousemove',e=>{
+    const r=svg.getBoundingClientRect(),mxp=e.clientX-r.left;
+    const i=n<=1?0:Math.max(0,Math.min(n-1,Math.round((mxp-m.l)/pw*(n-1))));
+    gl.setAttribute('x1',x(i));gl.setAttribute('x2',x(i));gl.style.display='';
+    tip.innerHTML='<b>'+dlabel(dates[i])+' '+dow(dates[i])+'</b>'+series.filter(s=>!s.off).map(s=>'<div><span class="sw" style="background:'+s.c+';width:10px;height:10px;border-radius:50%;margin-right:5px"></span>'+s.l+': '+nf.format(s.v[i])+'</div>').join('');
+    tip.style.display='block';
+    const tw=tip.offsetWidth;let left=x(i)+22;if(left+tw>W)left=x(i)-tw-4;
+    tip.style.left=left+'px';tip.style.top=(m.t+34)+'px';
+  });
+  $('#hv',el).addEventListener('mouseleave',()=>{tip.style.display='none';gl.style.display='none';});
+  el.querySelectorAll('[data-ch]').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.ch;chartOff.has(k)?chartOff.delete(k):chartOff.add(k);drawChart(el,dates,av);}));
+}
+let rzT=null;
+window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(lastChart&&document.body.contains(lastChart.el))drawChart(lastChart.el,lastChart.dates,lastChart.av);},150);});
+
+/* ---------- Dashboards (module registry) ---------- */
+const DASHBOARDS=[{id:'daily',title:'Daily Lead Funnel',render:renderDaily}];
+
+function renderDaily(el){
+  if(!D||!D.ads.size){el.innerHTML='<div class="empty">No data available.</div>';return;}
+  const R=curRange(),dates=dateList(R.from,R.to),ord=S.newest?dates.slice().reverse():dates,av=avail();
+  const tot=[0,0,0,0,0,0];
+  for(const d of dates){const g=D.G[d];if(g)for(let i=0;i<6;i++)tot[i]+=g[i];}
+  const defs=[{l:'Spend (₹)',i:0},{l:'Leads',i:1},{l:'Fresh Leads',i:2},{l:'Invalid Leads',i:5},{l:'Qualified',i:3},{l:'Test Drives',i:4},
+    {l:'Cost per Lead (₹)',cost:1,n:0,dn:1},{l:'Cost per Fresh Lead (₹)',cost:1,n:0,dn:2},{l:'Cost per Qualified Lead (₹)',cost:1,n:0,dn:3}];
+  const zero=[0,0,0,0,0,0];
+  let h=(R.clamped?'<div class="banner">Range limited to the latest '+MAXD+' days.</div>':'')+
+    '<p class="note">Columns are the day the lead was generated on Meta. Fresh, Qualified and Test Drives are credited back to that day, so earlier days can still grow as leads progress. In the chart, Spend uses the right axis and all counts use the left axis. Click a legend item to hide or show a line.</p>'+
+    '<div class="chart" id="chartWrap"></div><div class="scroller"><table class="g" style="width:'+tableWidth(ord.length)+'">'+colgroup(ord.length)+headHTML(ord,'Lead generated date')+'<tbody>';
+  for(const def of defs){
+    h+='<tr'+(def.cost?' class="cost"':'')+'><td class="c1">'+def.l+'</td>'+cellHTML('c2',val(def,tot,av))+
+       ord.map(d=>cellHTML('',val(def,D.G[d]||zero,av))).join('')+'</tr>';
+  }
+  el.innerHTML=h+'</tbody></table></div>';
+  drawChart($('#chartWrap',el),dates,av);
+  el._export=()=>{
+    const rows=[['Metric','Total'].concat(ord)];
+    for(const def of defs)rows.push([def.l,val(def,tot,av)].concat(ord.map(d=>val(def,D.G[d]||zero,av))));
+    return {name:'dashboard_'+R.from+'_to_'+R.to+'.csv',rows};
+  };
+}
+
+/* ---------- Detailed review ---------- */
+const DMET=[{l:'Spend (₹)',i:0},{l:'Leads',i:1},{l:'Fresh Leads',i:2},{l:'Invalid Leads',i:5},{l:'Qualified',i:3}];
+function detailModel(){
+  const R=curRange(),dates=dateList(R.from,R.to),q=S.search.toLowerCase().split(/\s+/).filter(Boolean),list=[];
+  for(const a of D.ads.values()){
+    if(q.length){const hay=(a.ad+' '+a.adset+' '+a.campaign).toLowerCase();if(!q.every(t=>hay.includes(t)))continue;}
+    const tot=[0,0,0,0,0,0];
+    for(const d of dates){const c=a.days[d];if(c)for(let i=0;i<6;i++)tot[i]+=c[i];}
+    if(S.hideInactive&&!(tot[0]>0||tot[1]>0||tot[2]>0||tot[3]>0))continue;
+    list.push({a,tot});
+  }
+  const cpl=x=>x.tot[1]>0&&x.tot[0]>0?x.tot[0]/x.tot[1]:Infinity;
+  const cpq=x=>x.tot[3]>0&&x.tot[0]>0?x.tot[0]/x.tot[3]:Infinity;
+  const nm=x=>(x.a.ad+' '+x.a.adset).toLowerCase();
+  const sorts={spend:(x,y)=>y.tot[0]-x.tot[0],leads:(x,y)=>y.tot[1]-x.tot[1],qual:(x,y)=>y.tot[3]-x.tot[3],cpl:(x,y)=>cpl(x)-cpl(y)||0,cpq:(x,y)=>cpq(x)-cpq(y)||0,name:(x,y)=>nm(x)<nm(y)?-1:1};
+  list.sort((x,y)=>{const r=(sorts[S.sort]||sorts.spend)(x,y);return isNaN(r)?0:r;});
+  return {R,dates,list,ord:S.newest?dates.slice().reverse():dates};
+}
+function blockHTML(x,ord,av){
+  const a=x.a,t=x.tot;
+  const cpl=t[1]>0&&t[0]>0?'₹'+nf.format(t[0]/t[1]):'–',cpq=t[3]>0&&t[0]>0?'₹'+nf.format(t[0]/t[3]):'–';
+  let h='<tbody class="blk"><tr class="adrow"><td class="c1" colspan="2"><div class="adn" title="'+esc(a.ad)+'">'+esc(a.ad)+'</div>'+
+    '<div class="ads" title="'+esc(a.adset+' | '+a.campaign)+'">'+esc(a.adset||'(no ad set)')+(a.campaign?' · '+esc(a.campaign):'')+'</div>'+
+    '<div class="sum">CPL <b>'+cpl+'</b> · CPQL <b>'+cpq+'</b></div></td><td colspan="'+ord.length+'"></td></tr>';
+  for(const def of DMET){
+    h+='<tr><td class="c1" style="padding-left:18px">'+def.l+'</td>'+cellHTML('c2',val(def,t,av))+
+       ord.map(d=>cellHTML('',val(def,a.days[d]||[0,0,0,0,0,0],av))).join('')+'</tr>';
+  }
+  return h+'</tbody>';
+}
+function renderDetail(el){
+  if(!D||!D.ads.size){el.innerHTML='<div class="empty">No data available.</div>';return;}
+  el.innerHTML='<div class="tools">'+
+    '<input type="search" id="dq" placeholder="Search ad, ad set or campaign" value="'+esc(S.search)+'">'+
+    '<select id="ds">'+[['spend','Sort: Spend (high to low)'],['leads','Sort: Leads (high to low)'],['qual','Sort: Qualified (high to low)'],['cpl','Sort: Cost per Lead (low to high)'],['cpq','Sort: Cost per Qualified (low to high)'],['name','Sort: Name (A to Z)']].map(o=>'<option value="'+o[0]+'"'+(S.sort===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>'+
+    '<label class="chk"><input type="checkbox" id="dh"'+(S.hideInactive?' checked':'')+'> Hide ads with no activity in range</label>'+
+    '<span class="note" id="dc" style="margin:0"></span></div><div id="dbanner"></div><div class="scroller" id="dscroll"></div>';
+  const sc=$('#dscroll',el);let model=null,shown=0;
+  const av=avail();
+  function build(){
+    model=detailModel();shown=0;
+    $('#dc',el).textContent='Showing '+model.list.length+' of '+D.ads.size+' ads';
+    $('#dbanner',el).innerHTML=model.R.clamped?'<div class="banner">Range limited to the latest '+MAXD+' days.</div>':'';
+    if(!model.list.length){sc.innerHTML='<div class="empty">No ads match.</div>';return;}
+    sc.innerHTML='<table class="g" style="width:'+tableWidth(model.ord.length)+'">'+colgroup(model.ord.length)+headHTML(model.ord,'Ad')+'</table>';
+    more();
+  }
+  function more(){
+    const tb=sc.querySelector('table');if(!tb||shown>=model.list.length)return;
+    const end=Math.min(shown+CHUNK,model.list.length);let h='';
+    for(let i=shown;i<end;i++)h+=blockHTML(model.list[i],model.ord,av);
+    tb.insertAdjacentHTML('beforeend',h);shown=end;
+    if(shown<model.list.length&&sc.scrollHeight<=sc.clientHeight+500)more();
+  }
+  sc.addEventListener('scroll',()=>{if(sc.scrollTop+sc.clientHeight>sc.scrollHeight-600)more();});
+  let tm=null;
+  $('#dq',el).addEventListener('input',e=>{clearTimeout(tm);tm=setTimeout(()=>{S.search=e.target.value;build();},200);});
+  $('#ds',el).addEventListener('change',e=>{S.sort=e.target.value;savePrefs();build();});
+  $('#dh',el).addEventListener('change',e=>{S.hideInactive=e.target.checked;savePrefs();build();});
+  build();
+  el._export=()=>{
+    const m=detailModel(),rows=[['Ad','Ad set','Campaign','Metric','Total'].concat(m.ord)];
+    for(const x of m.list)for(const def of DMET)rows.push([x.a.ad,x.a.adset,x.a.campaign,def.l,val(def,x.tot,av)].concat(m.ord.map(d=>val(def,x.a.days[d]||[0,0,0,0,0,0],av))));
+    return {name:'detailed_review_'+m.R.from+'_to_'+m.R.to+'.csv',rows};
+  };
+}
+
+/* ---------- Shell ---------- */
+const TABS=[['dash','Dashboards'],['detail','Detailed Review']];
+function renderTabs(){
+  if(!TABS.some(t=>t[0]===S.tab))S.tab='dash';
+  $('#tabs').innerHTML=TABS.map(t=>'<button data-tab="'+t[0]+'" class="'+(S.tab===t[0]?'on':'')+'">'+t[1]+'</button>').join('');
+}
+function renderRangeBar(){
+  const bar=$('#rangeBar');
+  if(S.load!=='ok'){bar.innerHTML='';return;}
+  const R=curRange();
+  const opts=[['today','Today'],['yesterday','Yesterday'],['last7','Last 7 days'],['last30','Last 30 days'],['month','This month'],['lastmonth','Last month'],['all','All data'],['custom','Custom']];
+  bar.innerHTML='<select id="rp">'+opts.map(o=>'<option value="'+o[0]+'"'+(S.preset===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>'+
+    '<input type="date" id="rf" value="'+R.from+'"><span>to</span><input type="date" id="rt" value="'+R.to+'">'+
+    '<label class="chk"><input type="checkbox" id="rn"'+(S.newest?' checked':'')+'> Newest first</label>'+
+    '<button class="btn" id="rx">Export CSV</button>';
+}
+function renderFooter(){
+  const f=$('#foot');
+  f.textContent=S.load==='ok'&&S.meta&&S.meta.generatedAt?'Data last updated: '+fmtDT(S.meta.generatedAt)+'.':'';
+}
+function render(){
+  savePrefs();renderTabs();renderRangeBar();
+  const el=$('#main');
+  if(S.load==='loading'){el.innerHTML='<div class="empty">Loading data…</div>';renderFooter();return;}
+  if(S.load==='none'){el.innerHTML='<div class="empty">No data has been published yet. Please check back later.</div>';renderFooter();return;}
+  if(S.load==='error'){el.innerHTML='<div class="empty">'+esc(S.err)+'<br><br><button class="btn" data-retry="1">Try again</button></div>';renderFooter();return;}
+  const av=avail(),names=['','','Fresh Leads','Qualified','Test Drives'];
+  const soft=[2,3,4].filter(i=>!av[i]).map(i=>names[i]);
+  let banner='';
+  if(soft.length)banner='<div class="banner">Not included in the latest update: '+soft.join(', ')+'. Rows that depend on them show n/a.</div>';
+  el.innerHTML=banner+'<div id="page"></div>';
+  const page=$('#page',el);
+  if(S.tab==='dash'){
+    page.innerHTML='<div class="tools">'+DASHBOARDS.map(d=>'<button class="pill'+(S.dash===d.id?' on':'')+'" data-dash="'+d.id+'">'+d.title+'</button>').join('')+'</div><div id="dbody"></div>';
+    const body=$('#dbody',page);const dd=DASHBOARDS.find(d=>d.id===S.dash)||DASHBOARDS[0];
+    dd.render(body);page._exp=body;
+  }else{renderDetail(page);page._exp=page;}
+  renderFooter();
+}
+
+/* ---------- Events ---------- */
+function exportCSV(){
+  const page=$('#page');const src=page&&page._exp;if(!src||!src._export)return;
+  const {name,rows}=src._export();
+  const csv=rows.map(r=>r.map(c=>{c=String(c==null?'':c);return /[",\r\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));a.download=name;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-tab]');if(t){e.preventDefault();S.tab=t.dataset.tab;render();return;}
+  const d=e.target.closest('[data-dash]');if(d){S.dash=d.dataset.dash;render();return;}
+  if(e.target.closest('[data-retry]')){load();return;}
+  if(e.target.id==='rx')exportCSV();
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='rp'){S.preset=t.value;if(t.value==='custom'){const R=curRange();S.from=R.from;S.to=R.to;}render();return;}
+  if(t.id==='rf'||t.id==='rt'){if(!$('#rf').value||!$('#rt').value)return;S.preset='custom';S.from=$('#rf').value;S.to=$('#rt').value;render();return;}
+  if(t.id==='rn'){S.newest=t.checked;render();return;}
+});
+
+/* ---------- Boot ---------- */
+loadPrefs();
+load();
+window.__view={S,get D(){return D;},buildModel};
+})();
+</script>
+</body>
+</html>
