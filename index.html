@@ -3,80 +3,105 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>Meta Ads to Salesforce Admin</title>
+<title>Meta Ads to Salesforce Dashboard</title>
 <style>
-:root{--bg:#f5f6f8;--card:#fff;--ink:#1c2430;--mut:#6b7686;--line:#e2e6ec;--acc:#1f5eff;--head:#eef1f6;--warn:#b45309;--bad:#b91c1c;--ok:#15803d}
+:root{--bg:#f5f6f8;--card:#fff;--ink:#1c2430;--mut:#6b7686;--line:#e2e6ec;--acc:#1f5eff;--head:#eef1f6;--warn:#b45309;--bad:#b91c1c;--ok:#15803d;--w1:190px;--w2:92px}
 @media(prefers-color-scheme:dark){:root{--bg:#12161c;--card:#1a2029;--ink:#e6eaf0;--mut:#93a0b2;--line:#2a323e;--acc:#6b9cff;--head:#222a35;--warn:#f0b35a;--bad:#f28b8b;--ok:#6ccf8e}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 header{background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;position:sticky;top:0;z-index:20}
 .row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 h1{font-size:16px;margin:0 8px 0 0}
-h3{margin:0 0 6px}
-.bar{margin-left:auto;display:flex;gap:8px;align-items:center}
-a{color:var(--acc)}
-select,input[type=text],input[type=password]{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);width:100%}
-select{width:auto}
-label.chk{display:flex;gap:6px;align-items:center;color:var(--mut);cursor:pointer}
-button.btn{font:inherit;padding:7px 14px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer}
-button.btn:hover:not(:disabled){border-color:var(--acc)}
-button.btn:disabled{opacity:.5;cursor:not-allowed}
-button.pri{background:var(--acc);border-color:var(--acc);color:#fff}
-main{padding:14px 16px;max-width:1200px}
+nav{display:flex;gap:4px}
+nav button,.pill{border:1px solid var(--line);background:transparent;color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer;font:inherit}
+nav button.on,.pill.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.bar{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+select,input[type=date],input[type=search]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+label.chk{display:flex;gap:5px;align-items:center;color:var(--mut);cursor:pointer}
+button.btn{font:inherit;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer}
+button.btn:hover{border-color:var(--acc)}
+main{padding:14px 16px}
+footer{padding:10px 16px 24px;color:var(--mut);font-size:12px}
+footer a{color:var(--acc);cursor:pointer}
 .note{color:var(--mut);margin:0 0 10px}
 .banner{background:rgba(180,83,9,.1);border:1px solid var(--warn);color:var(--warn);padding:8px 12px;border-radius:6px;margin-bottom:10px}
+.scroller{overflow:auto;max-height:calc(100vh - 215px);border:1px solid var(--line);border-radius:8px;background:var(--card)}
+table.g{border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:13px;font-variant-numeric:tabular-nums}
+.g th,.g td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--card)}
+.g thead th{position:sticky;top:0;z-index:3;background:var(--head);font-weight:600;line-height:1.2}
+.g thead th small{display:block;font-weight:400;color:var(--mut);font-size:11px}
+.g .c1{position:sticky;left:0;z-index:2;text-align:left}
+.g .c2{position:sticky;left:var(--w1);z-index:2;border-right:1px solid var(--line);font-weight:600}
+.g thead .c1,.g thead .c2{z-index:4}
+.g tr.cost td{color:var(--mut)}
+.g tr.cost td.c2{color:var(--ink)}
+.g td.na{color:var(--mut);font-weight:400}
+.g tr.adrow td{background:var(--head);border-bottom:none;padding-top:8px}
+.g tr.adrow .c1{white-space:normal}
+.adn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ads,.sum{color:var(--mut);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sum b{color:var(--ink);font-weight:600}
+.g tbody.blk tr:last-child td{border-bottom:2px solid var(--line)}
+.tools{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:10px}
+.tools input[type=search]{min-width:260px}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-bottom:18px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
-.card h3{font-size:14px;margin-bottom:2px}
+.card h3{margin:0 0 2px;font-size:14px}
 .card .d{color:var(--mut);font-size:12px;margin-bottom:8px}
 .drop{display:block;border:1.5px dashed var(--line);border-radius:6px;padding:10px;text-align:center;color:var(--mut);cursor:pointer}
 .drop.over,.drop:hover{border-color:var(--acc);color:var(--acc)}
 .drop input{display:none}
 .st{font-size:12px;margin-top:8px}
-.st.ok{color:var(--ok)}.st.err{color:var(--bad)}.st.no{color:var(--mut)}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:18px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px 14px;margin-bottom:12px}
-.grid label{display:block;color:var(--mut);font-size:12px}
-.grid label input{margin-top:3px;color:var(--ink);font-size:14px}
-.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.msg{margin-top:10px;font-size:13px}
-.msg.ok{color:var(--ok)}.msg.err{color:var(--bad)}.msg.busy{color:var(--mut)}
+.st.ok{color:var(--ok)}.st.err{color:var(--bad)}.st.no{color:var(--mut)}.st.warn{color:var(--warn)}
 table.h{border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line)}
 table.h td,table.h th{padding:5px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 table.h th{background:var(--head)}
 table.h td.v{text-align:right;font-variant-numeric:tabular-nums}
 table.h td.n{color:var(--mut);font-size:12px}
-.sum{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:12px}
-.sum div{background:var(--head);border-radius:6px;padding:8px 10px}
-.sum b{display:block;font-size:16px;font-variant-numeric:tabular-nums}
-.sum span{color:var(--mut);font-size:12px}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:12px;position:relative}
+.lg{display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:4px}
+.lg button{border:0;background:none;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;font:inherit;padding:2px 4px}
+.lg button.off{opacity:.4;text-decoration:line-through}
+.sw{width:18px;height:3px;border-radius:2px;display:inline-block}
+.tip{position:absolute;pointer-events:none;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.18);display:none;z-index:5;white-space:nowrap}
+.tip b{display:block;margin-bottom:2px}
+.empty{padding:40px;text-align:center;color:var(--mut)}
 </style>
 </head>
 <body>
 <header>
   <div class="row">
-    <h1>Meta Ads &rarr; Salesforce &middot; Admin</h1>
-    <div class="bar"><a href="view.html" target="_blank" rel="noopener">Open public view</a></div>
+    <h1>Meta Ads &rarr; Salesforce</h1>
+    <nav id="tabs"></nav>
+    <div class="bar" id="rangeBar"></div>
   </div>
 </header>
 <main id="main"></main>
+<footer id="foot"></footer>
 
-<script>
+<script id="appjs">
 (function(){
 'use strict';
+
+/* ---------- Embedded snapshot (only present in exported files) ---------- */
+const EMB=(function(){try{const el=document.getElementById('embeddedData');return el?JSON.parse(el.textContent):null;}catch(e){return null;}})();
+const SHELL=Array.from(document.body.children).filter(e=>e.tagName!=='SCRIPT').map(e=>e.outerHTML).join('\n');
+const BASE_TITLE=document.title;
 
 /* ---------- File definitions ---------- */
 const DEFS=[
  {id:'spend',label:'Meta Spend',desc:'Ad-wise daily spend export (CSV). Needs: Ad set name, Ad name, Day, Amount spent (INR).',
   cols:{campaign:['campaign name'],adset:['ad set name','adset name'],ad:['ad name'],day:['day','date'],amount:['amount spent (inr)','amount spent','spend']},
   order:['campaign','adset','ad','day','amount'],optional:['campaign']},
- {id:'leads',label:'Meta Leads',desc:'Meta lead dump (CSV). Needs: created_time, ad_name, adset_name, phone_number. Should reach further back than the SF files.',
-  cols:{campaign:['campaign_name','campaign name'],adset:['adset_name','ad set name','adset name'],ad:['ad_name','ad name'],created:['created_time','created time'],organic:['is_organic'],phone:['phone_number','phone','phone number']},
-  order:['campaign','adset','ad','created','organic','phone'],optional:['campaign','organic']},
- {id:'gen',label:'SF Generated',desc:'Optional. Used only for the Meta-to-SF sync check. Needs: Phone, Ad set Name, Enquiry Source: Created Date.',
-  cols:{phone:['phone','mobile'],adset:['ad set name','adset name'],date:['enquiry source: created date']},
-  order:['phone','adset','date'],optional:['date']},
+ {id:'leads',label:'Meta Leads',multi:true,desc:'Meta lead dump (CSV). Select several files at once and they are stacked into one. Needs: created_time, ad_name, adset_name, phone_number. Should reach further back than the SF files.',
+  cols:{campaign:['campaign_name','campaign name'],adset:['adset_name','ad set name','adset name'],ad:['ad_name','ad name'],created:['created_time','created time'],organic:['is_organic'],phone:['phone_number','phone','phone number'],
+        id:['id'],ad_id:['ad_id'],adset_id:['adset_id'],campaign_id:['campaign_id'],form_id:['form_id'],form_name:['form_name'],platform:['platform'],full_name:['full_name','full name'],email:['email']},
+  // First six positions are used by the dashboard maths; the rest are stored for future use.
+  order:['campaign','adset','ad','created','organic','phone','id','ad_id','adset_id','campaign_id','form_id','form_name','platform','full_name','email'],
+  optional:['campaign','organic','id','ad_id','adset_id','campaign_id','form_id','form_name','platform','full_name','email']},
+ {id:'gen',label:'SF Generated',desc:'Used for the Meta-to-SF sync check and the Lost / Not Connected rows. Needs: Phone, Ad set Name, Enquiry Source: Created Date, Lead: Quality Type.',
+  cols:{phone:['phone','mobile'],adset:['ad set name','adset name'],date:['enquiry source: created date'],qtype:['quality type','lead: quality type']},
+  order:['phone','adset','date','qtype'],optional:['date','qtype']},
  {id:'fresh',label:'SF Fresh leads',desc:'Leads new to Salesforce in the period. Needs: Mobile, Ad set Name, Quality Type (for Invalid Leads).',
   cols:{phone:['mobile','phone','phone number'],adset:['ad set name','adset name'],qtype:['quality type','lead: quality type']},order:['phone','adset','qtype'],optional:['qtype']},
  {id:'qual',label:'SF Qualified',desc:'Qualified leads. Needs: Mobile, Ad set Name.',
@@ -84,25 +109,21 @@ const DEFS=[
  {id:'td',label:'SF Test Drive file',desc:'Test drive completed leads. Needs: Mobile, Ad set Name.',
   cols:{phone:['mobile','phone','phone number'],adset:['ad set name','adset name']},order:['phone','adset'],optional:[]}
 ];
+const MAXD=400;               // max date columns rendered
+const CHUNK=20;               // ad blocks rendered per scroll step
 
 /* ---------- State ---------- */
-const DEFCFG={owner:'ibestin',repo:'meta-sf-spend',branch:'main',path:'data/data.json',token:'',remember:true};
-const S={dmy:true,files:{},errors:{},busy:{},idbOk:true,cfg:Object.assign({},DEFCFG),pub:{state:'idle',msg:''}};
+const S={tab:'dash',dash:'daily',preset:'last30',from:'',to:'',newest:false,search:'',sort:'spend',hideInactive:true,dmy:true,files:{},errors:{},warns:{},busy:{},idbOk:true};
 let D=null;
-const PK='metaSfAdmin.prefs.v1';
+const PREF_KEYS=['tab','dash','preset','from','to','newest','sort','hideInactive','dmy'];
+const PK=EMB?'metaSfDash.embed.prefs.v1.'+EMB.exportedAt:'metaSfDash.prefs.v1';
 function loadPrefs(){
-  try{
-    const p=JSON.parse(localStorage.getItem(PK)||'{}');
-    if('dmy' in p)S.dmy=!!p.dmy;
-    if(p.cfg&&typeof p.cfg==='object')for(const k of Object.keys(DEFCFG))if(k in p.cfg)S.cfg[k]=p.cfg[k];
-  }catch(e){}
+  const apply=p=>{for(const k of PREF_KEYS)if(k in p)S[k]=p[k];};
+  if(EMB&&EMB.prefs)apply(EMB.prefs);
+  try{apply(JSON.parse(localStorage.getItem(PK)||'{}'));}catch(e){}
+  if(EMB&&S.tab==='data')S.tab='dash';
 }
-function savePrefs(){
-  try{
-    const c=Object.assign({},S.cfg);if(!c.remember)c.token='';
-    localStorage.setItem(PK,JSON.stringify({dmy:S.dmy,cfg:c}));
-  }catch(e){}
-}
+function savePrefs(){try{const o={};for(const k of PREF_KEYS)o[k]=S[k];localStorage.setItem(PK,JSON.stringify(o));}catch(e){}}
 
 /* ---------- Helpers ---------- */
 const $=(s,r)=>(r||document).querySelector(s);
@@ -111,8 +132,10 @@ const nf=new Intl.NumberFormat('en-IN',{maximumFractionDigits:0});
 const p2=n=>String(n).padStart(2,'0');
 const nk=s=>String(s==null?'':s).trim().replace(/\s+/g,' ').toLowerCase();
 const MON={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+function today(){return new Date(Date.now()+330*60000).toISOString().slice(0,10);}
 function addDays(d,n){return new Date(Date.parse(d+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);}
 function dayDiff(a,b){return Math.round((Date.parse(a+'T00:00:00Z')-Date.parse(b+'T00:00:00Z'))/864e5);}
+function dateList(f,t){const o=[];for(let d=f;d<=t;d=addDays(d,1))o.push(d);return o;}
 function fmtDT(ms){const d=new Date(ms+330*60000);return d.getUTCDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()]+' '+d.getUTCFullYear()+', '+p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+' IST';}
 
 /* ---------- Parsing ---------- */
@@ -141,7 +164,7 @@ function parseCSV(text){
 function cleanPhone(v){
   let s=String(v==null?'':v).trim();
   if(!s)return null;
-  if(/^\d+(\.\d+)?e[+-]?\d+$/i.test(s))return null;
+  if(/^\d+(\.\d+)?e[+-]?\d+$/i.test(s))return null;   // Excel scientific notation: digits already lost
   s=s.replace(/\.0+$/,'');
   const d=s.replace(/\D/g,'');
   return d.length>=10?d.slice(-10):null;
@@ -159,7 +182,7 @@ function mkDT(y,mo,d,h,mi,s){
 function parseDT(v,dmy){
   if(v==null)return null;const s=String(v).trim();if(!s)return null;let m;
   if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T\s]+(\d{1,2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?\s*(Z|[+-]\d{2}:?\d{2})?)?/))){
-    if(m[7]&&m[4]!=null){
+    if(m[7]&&m[4]!=null){                      // explicit timezone: convert to IST
       let off=0;if(m[7]!=='Z'){const z=m[7].replace(':','');off=(z[0]==='-'?-1:1)*(+z.slice(1,3)*60+ +z.slice(3,5));}
       const x=new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+(m[6]||0))-off*60000+330*60000);
       return mkDT(x.getUTCFullYear(),x.getUTCMonth()+1,x.getUTCDate(),x.getUTCHours(),x.getUTCMinutes(),x.getUTCSeconds());
@@ -176,7 +199,7 @@ function parseDT(v,dmy){
     const mo=MON[m[2].toLowerCase()];if(!mo)return null;let y=+m[3];if(y<100)y+=2000;
     return mkDT(y,mo,+m[1],m[4],m[5],m[6]);
   }
-  if(/^\d{5}(\.\d+)?$/.test(s)){
+  if(/^\d{5}(\.\d+)?$/.test(s)){                // Excel serial date
     const x=new Date(Date.UTC(1899,11,30)+Math.round(parseFloat(s)*864e5));
     return mkDT(x.getUTCFullYear(),x.getUTCMonth()+1,x.getUTCDate(),x.getUTCHours(),x.getUTCMinutes(),x.getUTCSeconds());
   }
@@ -203,8 +226,11 @@ const IDB={db:null,
 };
 
 /* ---------- Core computation ---------- */
-// metric index: 0 spend, 1 leads, 2 fresh, 3 qualified, 4 test drives, 5 invalid leads
+// metric index: 0 spend, 1 leads, 2 fresh, 3 qualified, 4 test drives, 5 invalid leads, 6 lost, 7 not connected
+const NM=8;
 const INVALID_TAGS=new Set(['not enquired','invalid number','non-sales related','wrong number','aftersales']);
+const LOST_TAGS=new Set(['booked another car','purchased another vehicle','not interested','high waiting time','other region','already in follow up','already booked']);
+const NC_TAGS=new Set(['switched off','ringing no response','number busy','busy need call back after','not reachable','isd number','whatsapp blast done']);
 function compute(){
   const F=S.files,dmy=S.dmy,ads=new Map(),st={};
   const getAd=(adset,ad,camp)=>{
@@ -213,8 +239,9 @@ function compute(){
     else if(!a.campaign&&camp)a.campaign=String(camp).trim();
     return a;
   };
-  const cell=(a,d)=>a.days[d]||(a.days[d]=[0,0,0,0,0,0]);
+  const cell=(a,d)=>a.days[d]||(a.days[d]=[0,0,0,0,0,0,0,0]);
 
+  // 1. Spend
   if(F.spend){
     const s=st.spend={rows:0,noAd:0,badDate:0,badAmt:0,total:0};
     for(const r of F.spend.rows){
@@ -225,6 +252,7 @@ function compute(){
       cell(getAd(r[1],r[2],r[0]),dt.d)[0]+=v;s.total+=v;
     }
   }
+  // 2. Meta leads
   const entries=[];
   if(F.leads){
     const s=st.leads={rows:0,organic:0,noAd:0,badDate:0,counted:0,invalidPhone:0};
@@ -242,6 +270,7 @@ function compute(){
   const groups=new Map(),phones=new Set();
   for(const e of entries){if(!e.p)continue;const k=e.p+'|'+e.sk;let g=groups.get(k);if(!g){g=[];groups.set(k,g);}g.push(e);phones.add(e.p);}
 
+  // 3. SF funnel files: credit the EARLIEST Meta entry for phone + ad set
   const credit=(id,col)=>{
     const f=F[id];if(!f)return;
     const s=st[id]={rows:f.rows.length,invalid:0,dup:0,unmapped:0,mismatch:0,credited:0,skipped:!F.leads};
@@ -258,6 +287,21 @@ function compute(){
   };
   credit('fresh',2);credit('qual',3);credit('td',4);
 
+  // 3b. Lost / Not Connected: from SF Generated Quality Type, credited to the EARLIEST Meta entry for phone + ad set
+  if(F.gen&&F.leads&&F.gen.hasQ){
+    const s=st.genTag={lost:0,nc:0,unmapped:0,dup:0,invalid:0},seen=new Set();
+    for(const r of F.gen.rows){
+      const p=cleanPhone(r[0]);if(!p){s.invalid++;continue;}
+      const k=p+'|'+nk(r[1]);if(seen.has(k)){s.dup++;continue;}seen.add(k);
+      const q=nk(r[3]),c=LOST_TAGS.has(q)?6:NC_TAGS.has(q)?7:-1;
+      if(c<0)continue;
+      const g=groups.get(k);if(!g){s.unmapped++;continue;}
+      cell(g[0].a,g[0].d)[c]++;
+      if(c===6)s.lost++;else s.nc++;
+    }
+  }
+
+  // 4. Sync check: SF Generated vs Meta Leads (one-to-one, same day or +/-1 day)
   if(F.gen&&F.leads){
     const used=new Set(),s=st.gen={rows:F.gen.rows.length,invalid:0,matched:0,sfOnly:0,metaOnly:0};
     for(const r of F.gen.rows){
@@ -270,12 +314,13 @@ function compute(){
     s.metaOnly=entries.filter(e=>e.p&&!used.has(e)).length;
   }
 
-  const G=[0,0,0,0,0,0];let min=null,max=null,spendNoLeads=0,leadsNoSpend=0;
+  // 5. Day totals + coverage
+  const G={};let min=null,max=null,spendNoLeads=0,leadsNoSpend=0;
   for(const a of ads.values()){
     let sp=0,ld=0;
     for(const d in a.days){
-      const c=a.days[d];
-      for(let i=0;i<6;i++)G[i]+=c[i];
+      const c=a.days[d],g=G[d]||(G[d]=[0,0,0,0,0,0,0,0]);
+      for(let i=0;i<NM;i++)g[i]+=c[i];
       sp+=c[0];ld+=c[1];
       if(min===null||d<min)min=d;if(max===null||d>max)max=d;
     }
@@ -284,87 +329,197 @@ function compute(){
   let lmin=null,lmax=null;for(const e of entries){if(lmin===null||e.d<lmin)lmin=e.d;if(lmax===null||e.d>lmax)lmax=e.d;}
   return {ads,G,st,min,max,lmin,lmax,spendNoLeads,leadsNoSpend};
 }
-function avail(){const F=S.files;return [!!F.spend,!!F.leads,!!(F.fresh&&F.leads),!!(F.qual&&F.leads),!!(F.td&&F.leads),!!(F.fresh&&F.fresh.hasQ&&F.leads)];}
+function avail(){const F=S.files,gq=!!(F.gen&&F.gen.hasQ&&F.leads);return [!!F.spend,!!F.leads,!!(F.fresh&&F.leads),!!(F.qual&&F.leads),!!(F.td&&F.leads),!!(F.fresh&&F.fresh.hasQ&&F.leads),gq,gq];}
 function recompute(){D=compute();}
 
-/* ---------- Publish payload (aggregated only: no phone numbers) ---------- */
-function buildPayload(){
-  const ads=[];
+/* ---------- Date range ---------- */
+function presetRange(p){
+  const t=today();
+  switch(p){
+    case 'today':return [t,t];
+    case 'yesterday':{const y=addDays(t,-1);return [y,y];}
+    case 'last7':return [addDays(t,-6),t];
+    case 'last30':return [addDays(t,-29),t];
+    case 'month':return [t.slice(0,8)+'01',t];
+    case 'lastmonth':{const e=addDays(t.slice(0,8)+'01',-1);return [e.slice(0,8)+'01',e];}
+    case 'all':return D&&D.min?[D.min,D.max]:[t,t];
+    default:return [S.from,S.to];
+  }
+}
+function curRange(){
+  let [f,t]=presetRange(S.preset);
+  if(!f||!t){[f,t]=presetRange('last30');}
+  if(f>t){const x=f;f=t;t=x;}
+  let clamped=false;
+  if(dayDiff(t,f)>=MAXD){f=addDays(t,-(MAXD-1));clamped=true;}
+  return {from:f,to:t,clamped};
+}
+
+/* ---------- Formatting ---------- */
+const dow=d=>['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(d+'T00:00:00Z').getUTCDay()];
+const dlabel=d=>(+d.slice(8))+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+d.slice(5,7)-1];
+function val(def,arr,av){
+  if(def.cost){
+    if(!av[def.n]||!av[def.dn])return 'n/a';
+    return arr[def.n]>0&&arr[def.dn]>0?nf.format(arr[def.n]/arr[def.dn]):'–';
+  }
+  if(!av[def.i])return 'n/a';
+  return arr[def.i]>0?nf.format(arr[def.i]):'–';
+}
+const cellHTML=(cls,s)=>'<td'+(cls||s==='n/a'?' class="'+((cls||'')+(s==='n/a'?' na':'')).trim()+'"':'')+'>'+s+'</td>';
+function colgroup(n){return '<colgroup><col style="width:var(--w1)"><col style="width:var(--w2)">'+'<col style="width:68px">'.repeat(n)+'</colgroup>';}
+function tableWidth(n){return 'calc(var(--w1) + var(--w2) + '+(n*68)+'px)';}
+function headHTML(ord,first){
+  return '<thead><tr><th class="c1">'+first+'</th><th class="c2">Total</th>'+ord.map(d=>'<th>'+dlabel(d)+'<small>'+dow(d)+'</small></th>').join('')+'</tr></thead>';
+}
+
+/* ---------- Line chart (inline SVG, no libraries) ---------- */
+const CH=[{k:0,l:'Spend (₹)',c:'#E69F00',ax:'r',dash:'6 4'},{k:1,l:'Leads',c:'#0072B2',ax:'l'},{k:2,l:'Fresh Leads',c:'#009E73',ax:'l'},{k:5,l:'Invalid Leads',c:'#D55E00',ax:'l'},{k:3,l:'Qualified',c:'#CC79A7',ax:'l'}];
+const chartOff=new Set();let lastChart=null;
+function niceScale(v){
+  if(!(v>0))return {max:4,step:1};
+  const raw=v/4,mag=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/mag;
+  const st=(m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*mag;
+  return {step:st,max:st*Math.ceil(v/st-1e-9)};
+}
+function drawChart(el,dates,av){
+  lastChart={el,dates,av};
+  const W=Math.max(320,el.clientWidth-24),H=300,m={l:52,r:72,t:26,b:34},pw=W-m.l-m.r,ph=H-m.t-m.b,n=dates.length,zero=[0,0,0,0,0,0,0,0];
+  const series=CH.filter(s=>av[s.k]).map(s=>({...s,v:dates.map(d=>(D.G[d]||zero)[s.k]),off:chartOff.has(s.k)}));
+  const vis=series.filter(s=>!s.off);
+  const mx=ax=>Math.max(0,...vis.filter(s=>s.ax===ax).flatMap(s=>s.v));
+  const hasL=vis.some(s=>s.ax==='l'),hasR=vis.some(s=>s.ax==='r');
+  const L=niceScale(mx('l')),R=niceScale(mx('r'));
+  const x=i=>m.l+(n<=1?pw/2:pw*i/(n-1));
+  const yl=v=>m.t+ph-ph*v/L.max,yr=v=>m.t+ph-ph*v/R.max;
+  let g='';
+  const gridSc=hasL?L:R,gy=hasL?yl:yr;
+  for(let v=0;v<=gridSc.max+1e-9;v+=gridSc.step)g+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+gy(v)+'" y2="'+gy(v)+'" style="stroke:var(--line)"/>';
+  if(hasL)for(let v=0;v<=L.max+1e-9;v+=L.step)g+='<text x="'+(m.l-6)+'" y="'+(yl(v)+4)+'" text-anchor="end" font-size="11" fill="currentColor">'+nf.format(v)+'</text>';
+  if(hasR)for(let v=0;v<=R.max+1e-9;v+=R.step)g+='<text x="'+(W-m.r+6)+'" y="'+(yr(v)+4)+'" font-size="11" fill="currentColor">'+nf.format(v)+'</text>';
+  if(hasL)g+='<text x="4" y="11" font-size="11" fill="currentColor">Leads (count)</text>';
+  if(hasR)g+='<text x="'+(W-4)+'" y="11" font-size="11" text-anchor="end" fill="currentColor">Spend (₹)</text>';
+  const step=Math.max(1,Math.ceil(n/Math.max(1,Math.floor(pw/56))));
+  for(let i=0;i<n;i+=step)g+='<text x="'+x(i)+'" y="'+(H-12)+'" text-anchor="middle" font-size="11" fill="currentColor">'+dlabel(dates[i])+'</text>';
+  for(const s of vis){
+    const f=s.ax==='l'?yl:yr;
+    if(n>1)g+='<polyline fill="none" stroke="'+s.c+'" stroke-width="2" stroke-linejoin="round"'+(s.dash?' stroke-dasharray="'+s.dash+'"':'')+' points="'+s.v.map((v,i)=>x(i).toFixed(1)+','+f(v).toFixed(1)).join(' ')+'"/>';
+    if(n<=45)g+=s.v.map((v,i)=>'<circle cx="'+x(i).toFixed(1)+'" cy="'+f(v).toFixed(1)+'" r="2.5" fill="'+s.c+'"/>').join('');
+  }
+  el.innerHTML='<div class="lg">'+series.map(s=>'<button data-ch="'+s.k+'" class="'+(s.off?'off':'')+'" title="Click to show or hide"><span class="sw" style="background:'+s.c+'"></span>'+s.l+'</button>').join('')+'</div>'+
+    '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="color:var(--mut);display:block" role="img" aria-label="Daily spend and lead counts line chart">'+g+
+    '<line id="gl" y1="'+m.t+'" y2="'+(m.t+ph)+'" style="stroke:var(--mut);display:none"/><rect id="hv" x="'+m.l+'" y="'+m.t+'" width="'+pw+'" height="'+ph+'" fill="transparent"/></svg><div class="tip"></div>';
+  const svg=$('svg',el),tip=$('.tip',el),gl=$('#gl',el);
+  $('#hv',el).addEventListener('mousemove',e=>{
+    const r=svg.getBoundingClientRect(),mxp=e.clientX-r.left;
+    const i=n<=1?0:Math.max(0,Math.min(n-1,Math.round((mxp-m.l)/pw*(n-1))));
+    gl.setAttribute('x1',x(i));gl.setAttribute('x2',x(i));gl.style.display='';
+    tip.innerHTML='<b>'+dlabel(dates[i])+' '+dow(dates[i])+'</b>'+series.filter(s=>!s.off).map(s=>'<div><span class="sw" style="background:'+s.c+';width:10px;height:10px;border-radius:50%;margin-right:5px"></span>'+s.l+': '+nf.format(s.v[i])+'</div>').join('');
+    tip.style.display='block';
+    const tw=tip.offsetWidth;let left=x(i)+22;if(left+tw>W)left=x(i)-tw-4;
+    tip.style.left=left+'px';tip.style.top=(m.t+34)+'px';
+  });
+  $('#hv',el).addEventListener('mouseleave',()=>{tip.style.display='none';gl.style.display='none';});
+  el.querySelectorAll('[data-ch]').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.ch;chartOff.has(k)?chartOff.delete(k):chartOff.add(k);drawChart(el,dates,av);}));
+}
+let rzT=null;
+window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(lastChart&&document.body.contains(lastChart.el))drawChart(lastChart.el,lastChart.dates,lastChart.av);},150);});
+
+/* ---------- Dashboards (module registry) ---------- */
+const DASHBOARDS=[{id:'daily',title:'Daily Lead Funnel',render:renderDaily}];
+
+function renderDaily(el){
+  if(!D||!D.ads.size){el.innerHTML='<div class="empty">No data yet. Open the Data tab and load Meta Spend and Meta Leads.</div>';return;}
+  const R=curRange(),dates=dateList(R.from,R.to),ord=S.newest?dates.slice().reverse():dates,av=avail();
+  const tot=[0,0,0,0,0,0,0,0];
+  for(const d of dates){const g=D.G[d];if(g)for(let i=0;i<NM;i++)tot[i]+=g[i];}
+  const defs=[{l:'Spend (₹)',i:0},{l:'Leads',i:1},{l:'Fresh Leads',i:2},{l:'Invalid Leads',i:5},{l:'Lost',i:6},{l:'Not Connected',i:7},{l:'Qualified',i:3},{l:'Test Drives',i:4},
+    {l:'Cost per Lead (₹)',cost:1,n:0,dn:1},{l:'Cost per Fresh Lead (₹)',cost:1,n:0,dn:2},{l:'Cost per Qualified Lead (₹)',cost:1,n:0,dn:3}];
+  const zero=[0,0,0,0,0,0,0,0];
+  let h=(R.clamped?'<div class="banner">Range limited to the latest '+MAXD+' days.</div>':'')+
+    '<p class="note">Columns are the day the lead was generated on Meta. Fresh, Qualified and Test Drives are credited back to that day, so earlier days can still grow as leads progress. In the chart, Spend uses the right axis and all counts use the left axis. Click a legend item to hide or show a line.</p>'+
+    '<div class="chart" id="chartWrap"></div><div class="scroller"><table class="g" style="width:'+tableWidth(ord.length)+'">'+colgroup(ord.length)+headHTML(ord,'Lead generated date')+'<tbody>';
+  for(const def of defs){
+    h+='<tr'+(def.cost?' class="cost"':'')+'><td class="c1">'+def.l+'</td>'+cellHTML('c2',val(def,tot,av))+
+       ord.map(d=>cellHTML('',val(def,D.G[d]||zero,av))).join('')+'</tr>';
+  }
+  el.innerHTML=h+'</tbody></table></div>';
+  drawChart($('#chartWrap',el),dates,av);
+  el._export=()=>{
+    const rows=[['Metric','Total'].concat(ord)];
+    for(const def of defs)rows.push([def.l,val(def,tot,av)].concat(ord.map(d=>val(def,D.G[d]||zero,av))));
+    return {name:'dashboard_'+R.from+'_to_'+R.to+'.csv',rows};
+  };
+}
+
+/* ---------- Detailed review ---------- */
+const DMET=[{l:'Spend (₹)',i:0},{l:'Leads',i:1},{l:'Fresh Leads',i:2},{l:'Invalid Leads',i:5},{l:'Qualified',i:3}];
+function detailModel(){
+  const R=curRange(),dates=dateList(R.from,R.to),q=S.search.toLowerCase().split(/\s+/).filter(Boolean),list=[];
   for(const a of D.ads.values()){
-    const days={};let any=false;
-    for(const d in a.days){
-      const c=a.days[d];
-      if(c.some(v=>v)){days[d]=c.map(v=>Math.round(v*100)/100);any=true;}
-    }
-    if(any)ads.push({ad:a.ad,adset:a.adset,campaign:a.campaign,days});
+    if(q.length){const hay=(a.ad+' '+a.adset+' '+a.campaign).toLowerCase();if(!q.every(t=>hay.includes(t)))continue;}
+    const tot=[0,0,0,0,0,0,0,0];
+    for(const d of dates){const c=a.days[d];if(c)for(let i=0;i<NM;i++)tot[i]+=c[i];}
+    if(S.hideInactive&&!(tot[0]>0||tot[1]>0||tot[2]>0||tot[3]>0))continue;
+    list.push({a,tot});
   }
-  return {schema:1,generatedAt:Date.now(),avail:avail(),min:D.min,max:D.max,ads};
+  const cpl=x=>x.tot[1]>0&&x.tot[0]>0?x.tot[0]/x.tot[1]:Infinity;
+  const cpq=x=>x.tot[3]>0&&x.tot[0]>0?x.tot[0]/x.tot[3]:Infinity;
+  const nm=x=>(x.a.ad+' '+x.a.adset).toLowerCase();
+  const sorts={spend:(x,y)=>y.tot[0]-x.tot[0],leads:(x,y)=>y.tot[1]-x.tot[1],qual:(x,y)=>y.tot[3]-x.tot[3],cpl:(x,y)=>cpl(x)-cpl(y)||0,cpq:(x,y)=>cpq(x)-cpq(y)||0,name:(x,y)=>nm(x)<nm(y)?-1:1};
+  list.sort((x,y)=>{const r=(sorts[S.sort]||sorts.spend)(x,y);return isNaN(r)?0:r;});
+  return {R,dates,list,ord:S.newest?dates.slice().reverse():dates};
 }
-function canPublish(){
-  if(!S.files.spend||!S.files.leads)return 'Load Meta Spend and Meta Leads first.';
-  if(!D||!D.ads.size)return 'No usable data found in the loaded files.';
-  return '';
+function blockHTML(x,ord,av){
+  const a=x.a,t=x.tot;
+  const cpl=t[1]>0&&t[0]>0?'₹'+nf.format(t[0]/t[1]):'–',cpq=t[3]>0&&t[0]>0?'₹'+nf.format(t[0]/t[3]):'–';
+  let h='<tbody class="blk"><tr class="adrow"><td class="c1" colspan="2"><div class="adn" title="'+esc(a.ad)+'">'+esc(a.ad)+'</div>'+
+    '<div class="ads" title="'+esc(a.adset+' | '+a.campaign)+'">'+esc(a.adset||'(no ad set)')+(a.campaign?' · '+esc(a.campaign):'')+'</div>'+
+    '<div class="sum">CPL <b>'+cpl+'</b> · CPQL <b>'+cpq+'</b></div></td><td colspan="'+ord.length+'"></td></tr>';
+  for(const def of DMET){
+    h+='<tr><td class="c1" style="padding-left:18px">'+def.l+'</td>'+cellHTML('c2',val(def,t,av))+
+       ord.map(d=>cellHTML('',val(def,a.days[d]||[0,0,0,0,0,0,0,0],av))).join('')+'</tr>';
+  }
+  return h+'</tbody>';
 }
-function toB64(str){
-  const bytes=new TextEncoder().encode(str);let bin='';const ch=0x8000;
-  for(let i=0;i<bytes.length;i+=ch)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+ch));
-  return btoa(bin);
-}
-function downloadJSON(){
-  const why=canPublish();if(why){S.pub={state:'err',msg:why};render();return;}
-  const json=JSON.stringify(buildPayload());
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download='data.json';
-  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+function renderDetail(el){
+  if(!D||!D.ads.size){el.innerHTML='<div class="empty">No data yet. Open the Data tab and load Meta Spend and Meta Leads.</div>';return;}
+  el.innerHTML='<div class="tools">'+
+    '<input type="search" id="dq" placeholder="Search ad, ad set or campaign" value="'+esc(S.search)+'">'+
+    '<select id="ds">'+[['spend','Sort: Spend (high to low)'],['leads','Sort: Leads (high to low)'],['qual','Sort: Qualified (high to low)'],['cpl','Sort: Cost per Lead (low to high)'],['cpq','Sort: Cost per Qualified (low to high)'],['name','Sort: Name (A to Z)']].map(o=>'<option value="'+o[0]+'"'+(S.sort===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>'+
+    '<label class="chk"><input type="checkbox" id="dh"'+(S.hideInactive?' checked':'')+'> Hide ads with no activity in range</label>'+
+    '<span class="note" id="dc" style="margin:0"></span></div><div id="dbanner"></div><div class="scroller" id="dscroll"></div>';
+  const sc=$('#dscroll',el);let model=null,shown=0;
+  const av=avail();
+  function build(){
+    model=detailModel();shown=0;
+    $('#dc',el).textContent='Showing '+model.list.length+' of '+D.ads.size+' ads';
+    $('#dbanner',el).innerHTML=model.R.clamped?'<div class="banner">Range limited to the latest '+MAXD+' days.</div>':'';
+    if(!model.list.length){sc.innerHTML='<div class="empty">No ads match.</div>';return;}
+    sc.innerHTML='<table class="g" style="width:'+tableWidth(model.ord.length)+'">'+colgroup(model.ord.length)+headHTML(model.ord,'Ad')+'</table>';
+    more();
+  }
+  function more(){
+    const tb=sc.querySelector('table');if(!tb||shown>=model.list.length)return;
+    const end=Math.min(shown+CHUNK,model.list.length);let h='';
+    for(let i=shown;i<end;i++)h+=blockHTML(model.list[i],model.ord,av);
+    tb.insertAdjacentHTML('beforeend',h);shown=end;
+    if(shown<model.list.length&&sc.scrollHeight<=sc.clientHeight+500)more();
+  }
+  sc.addEventListener('scroll',()=>{if(sc.scrollTop+sc.clientHeight>sc.scrollHeight-600)more();});
+  let tm=null;
+  $('#dq',el).addEventListener('input',e=>{clearTimeout(tm);tm=setTimeout(()=>{S.search=e.target.value;build();},200);});
+  $('#ds',el).addEventListener('change',e=>{S.sort=e.target.value;savePrefs();build();});
+  $('#dh',el).addEventListener('change',e=>{S.hideInactive=e.target.checked;savePrefs();build();});
+  build();
+  el._export=()=>{
+    const m=detailModel(),rows=[['Ad','Ad set','Campaign','Metric','Total'].concat(m.ord)];
+    for(const x of m.list)for(const def of DMET)rows.push([x.a.ad,x.a.adset,x.a.campaign,def.l,val(def,x.tot,av)].concat(m.ord.map(d=>val(def,x.a.days[d]||[0,0,0,0,0,0,0,0],av))));
+    return {name:'detailed_review_'+m.R.from+'_to_'+m.R.to+'.csv',rows};
+  };
 }
 
-/* ---------- Publish to GitHub via API ---------- */
-async function ghFetch(url,opt,token){
-  const r=await fetch(url,Object.assign({cache:'no-store'},opt,{headers:Object.assign({'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},(opt&&opt.headers)||{})}));
-  return r;
-}
-async function errText(r){
-  let m='';try{const j=await r.json();m=j&&j.message?j.message:'';}catch(e){}
-  if(r.status===401)return 'GitHub rejected the token (401). It may be wrong or expired.';
-  if(r.status===403)return 'Access denied (403). '+(m||'The token may lack Contents read/write permission, or you hit a rate limit.');
-  if(r.status===404)return 'Not found (404). Check owner, repository and branch, and that the token has access to this repository.';
-  if(r.status===409||r.status===422)return 'Conflict while saving ('+r.status+'). '+m;
-  return 'GitHub error '+r.status+'. '+m;
-}
-async function publish(){
-  const c=S.cfg,why=canPublish();
-  if(why){S.pub={state:'err',msg:why};render();return;}
-  const owner=c.owner.trim(),repo=c.repo.trim(),branch=c.branch.trim()||'main',path=c.path.trim().replace(/^\/+/,''),token=c.token.trim();
-  if(!owner||!repo||!path||!token){S.pub={state:'err',msg:'Fill in owner, repository, file path and token.'};render();return;}
-  S.pub={state:'busy',msg:'Publishing…'};render();
-  try{
-    const payload=buildPayload(),json=JSON.stringify(payload),content=toB64(json);
-    const base='https://api.github.com/repos/'+encodeURIComponent(owner)+'/'+encodeURIComponent(repo)+'/contents/'+path.split('/').map(encodeURIComponent).join('/');
-    let res=null;
-    for(let attempt=0;attempt<2;attempt++){
-      let sha=null;
-      const g=await ghFetch(base+'?ref='+encodeURIComponent(branch),{},token);
-      if(g.status===200){const j=await g.json();if(Array.isArray(j))throw new Error('The path points to a folder, not a file.');sha=j.sha;}
-      else if(g.status!==404)throw new Error(await errText(g));
-      else{ // 404 can mean a missing file or a wrong repo; check the repo itself once
-        if(attempt===0){const rr=await ghFetch('https://api.github.com/repos/'+encodeURIComponent(owner)+'/'+encodeURIComponent(repo),{},token);if(!rr.ok)throw new Error(await errText(rr));}
-      }
-      const body={message:'Update dashboard data ('+fmtDT(Date.now())+')',content,branch};if(sha)body.sha=sha;
-      res=await ghFetch(base,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)},token);
-      if(res.ok)break;
-      if(attempt===0&&(res.status===409||res.status===422))continue;
-      throw new Error(await errText(res));
-    }
-    if(!res||!res.ok)throw new Error('Could not save the file after retrying.');
-    const kb=Math.round(json.length/1024);
-    S.pub={state:'ok',msg:'Published '+nf.format(payload.ads.length)+' ads ('+nf.format(kb)+' KB) at '+fmtDT(Date.now())+'. GitHub Pages usually takes 1 to 2 minutes to show the new data on the public page.',at:Date.now()};
-    try{localStorage.setItem(PK+'.lastPub',String(Date.now()));}catch(e){}
-  }catch(e){
-    S.pub={state:'err',msg:(e&&e.message)||String(e)};
-  }
-  render();
-}
-
-/* ---------- Render ---------- */
+/* ---------- Data tab ---------- */
 function healthRows(){
   const st=D.st,r=[],F=S.files,inr=v=>'₹'+nf.format(Math.round(v));
   if(st.spend){const s=st.spend;r.push(['Meta Spend','Rows read',nf.format(s.rows),'']);r.push(['Meta Spend','Total spend loaded',inr(s.total),'Compare with Ads Manager total for the same period.']);
@@ -391,105 +546,184 @@ function healthRows(){
   if(st.gen){const s=st.gen;r.push(['Sync check','SF Generated rows matched to Meta leads',nf.format(s.matched),'Same phone + ad set, same day or within 1 day.']);
     r.push(['Sync check','SF Generated rows with no Meta match',nf.format(s.sfOnly),'']);
     r.push(['Sync check','Meta leads with no SF Generated row',nf.format(s.metaOnly),'Possible sync gap between Meta and Salesforce.']);}
+  if(st.genTag){const s=st.genTag;
+    r.push(['SF Generated','Credited as Lost',nf.format(s.lost),'Booked Another Car, Purchased Another Vehicle, Not Interested, High Waiting Time, Other Region, Already in follow up, Already Booked.']);
+    r.push(['SF Generated','Credited as Not Connected',nf.format(s.nc),'Switched Off, Ringing No Response, Number Busy, Busy need call back after, Not Reachable, ISD Number, WhatsApp Blast Done.']);
+    r.push(['SF Generated','Lost / Not Connected hidden: no matching Meta lead',nf.format(s.unmapped),'Phone + ad set not found in Meta Leads.']);
+    r.push(['SF Generated','Invalid phone skipped (Lost / Not Connected)',nf.format(s.invalid),'']);
+    r.push(['SF Generated','Duplicate phone + ad set ignored (Lost / Not Connected)',nf.format(s.dup),'']);}
   if(F.spend&&F.leads){r.push(['Ads','Ads with spend but no leads in the data',nf.format(D.spendNoLeads),'Check if ad names differ between Meta Spend and Meta Leads.']);
     r.push(['Ads','Ads with leads but no spend in the data',nf.format(D.leadsNoSpend),'Spend file may not cover the same dates, or the ad was renamed.']);}
   return r;
 }
-function summaryHTML(){
-  if(!D||!D.ads.size)return '';
-  const G=D.G,av=avail(),t=(i,ok)=>ok?nf.format(G[i]):'n/a';
-  const box=(v,l)=>'<div><b>'+v+'</b><span>'+l+'</span></div>';
-  return '<h3>What will be published</h3><div class="sum">'+
-    box(nf.format(D.ads.size),'Ads')+
-    box((D.min||'-')+' to '+(D.max||'-'),'Date range')+
-    box(av[0]?'₹'+nf.format(Math.round(G[0])):'n/a','Spend')+
-    box(t(1,av[1]),'Leads')+box(t(2,av[2]),'Fresh leads')+box(t(5,av[5]),'Invalid leads')+box(t(3,av[3]),'Qualified')+box(t(4,av[4]),'Test drives')+
-    '</div>';
-}
-function publishHTML(){
-  const c=S.cfg,why=canPublish(),busy=S.pub.state==='busy';
-  const f=(id,l,v,type)=>'<label>'+l+'<input id="cfg_'+id+'" type="'+(type||'text')+'" value="'+esc(v)+'" autocomplete="off" spellcheck="false"></label>';
-  let last='';try{const t=+localStorage.getItem(PK+'.lastPub');if(t)last='Last published from this browser: '+fmtDT(t)+'.';}catch(e){}
-  return '<div class="panel"><h3>Publish to GitHub Pages</h3>'+
-    '<p class="note">Publishing saves only per-ad, per-day totals to <b>'+esc(c.path)+'</b> in your repository. No phone numbers are uploaded. The public page reads that file. '+esc(last)+'</p>'+
-    '<div class="grid">'+f('owner','GitHub username',c.owner)+f('repo','Repository',c.repo)+f('branch','Branch',c.branch)+f('path','Data file path',c.path)+f('token','Personal access token (fine-grained, Contents: read and write)',c.token,'password')+'</div>'+
-    '<label class="chk" style="margin-bottom:12px"><input type="checkbox" id="cfg_remember"'+(c.remember?' checked':'')+'> Remember the token in this browser only</label>'+
-    '<div class="btns"><button class="btn pri" id="pubgo"'+(why||busy?' disabled':'')+'>Publish to GitHub</button><button class="btn" id="pubdl"'+(why?' disabled':'')+'>Download data.json instead</button>'+(why?'<span class="note" style="margin:0">'+esc(why)+'</span>':'')+'</div>'+
-    (S.pub.msg?'<div class="msg '+S.pub.state+'">'+esc(S.pub.msg)+'</div>':'')+
-    '</div>';
-}
-function render(){
-  savePrefs();
+function renderData(){
   const el=$('#main');
-  let h='<p class="note">Files are read inside your browser and saved in this browser only (not on GitHub). Loading a file replaces the previous copy of that file. CSV only (for Excel files, use Save As CSV).</p>';
+  let h='<p class="note">Files are read inside your browser and saved in this browser only. Nothing is uploaded anywhere. Loading a file replaces the previous copy of that file. CSV only (for Excel files, use Save As CSV).</p>';
   if(!S.idbOk)h+='<div class="banner">Browser storage is unavailable here, so loaded data will be lost when this tab closes.</div>';
   h+='<div class="cards">';
   for(const def of DEFS){
     const f=S.files[def.id],err=S.errors[def.id];
     h+='<div class="card"><h3>'+def.label+'</h3><div class="d">'+esc(def.desc)+'</div>'+
-      '<label class="drop" data-id="'+def.id+'">'+(S.busy[def.id]?'Reading file…':'Drop CSV here or click to choose')+'<input type="file" accept=".csv,.tsv,.txt,text/csv" data-id="'+def.id+'"></label>'+
-      (err?'<div class="st err">'+esc(err)+'</div>':f?'<div class="st ok">Loaded: '+esc(f.name)+'<br>'+nf.format(f.rows.length)+' rows · '+fmtDT(f.loadedAt)+' · <a href="#" data-clear="'+def.id+'" style="color:var(--mut)">remove</a></div>':'<div class="st no">Not loaded</div>')+
+      '<label class="drop" data-id="'+def.id+'">'+(S.busy[def.id]?(def.multi?'Reading files…':'Reading file…'):(def.multi?'Drop CSV files here or click to choose (several allowed)':'Drop CSV here or click to choose'))+'<input type="file" accept=".csv,.tsv,.txt,text/csv" data-id="'+def.id+'"'+(def.multi?' multiple':'')+'></label>'+
+      (err?'<div class="st err">'+esc(err)+'</div>':f?'<div class="st ok">Loaded: '+esc(f.name)+'<br>'+nf.format(f.rows.length)+' rows · '+fmtDT(f.loadedAt)+' · <a href="#" data-clear="'+def.id+'" style="color:var(--mut)">remove</a>'+(f.parts&&f.parts.length>1?'<br><span style="color:var(--mut)">'+f.parts.map(p=>esc(p.name)+' ('+nf.format(p.rows)+')').join('<br>')+'</span>':'')+'</div>':'<div class="st no">Not loaded</div>')+
+      ((S.warns[def.id]||[]).length?'<div class="st warn">'+S.warns[def.id].map(esc).join('<br>')+'</div>':'')+
       '</div>';
   }
-  h+='</div><h3>Date format</h3><p class="note">Only used when a date is written like 05/10/2026. ISO dates (2026-10-05) and timestamps with a timezone are read exactly. Timestamps with an explicit timezone are converted to IST.</p>'+
-    '<select id="dmy" style="margin-bottom:18px"><option value="1"'+(S.dmy?' selected':'')+'>Day / Month / Year</option><option value="0"'+(!S.dmy?' selected':'')+'>Month / Day / Year</option></select>';
-  const missing=DEFS.filter(d=>['fresh','qual','td'].includes(d.id)&&!S.files[d.id]);
-  if(S.files.leads&&missing.length)h+='<div class="banner">Not loaded: '+missing.map(m=>m.label).join(', ')+'. Those rows will show n/a on the public page.</div>';
-  if(S.files.fresh&&!S.files.fresh.hasQ)h+='<div class="banner">SF Fresh leads has no Quality Type column (or was loaded before this update). Reload it to publish Invalid Leads.</div>';
-  h+=summaryHTML()+publishHTML();
+  h+='</div><h3 style="margin:0 0 6px">Date format</h3><p class="note">Only used when a date is written like 05/10/2026. ISO dates (2026-10-05) and timestamps with a timezone are read exactly. Timestamps with an explicit timezone are converted to IST.</p>'+
+    '<select id="dmy"><option value="1"'+(S.dmy?' selected':'')+'>Day / Month / Year</option><option value="0"'+(!S.dmy?' selected':'')+'>Month / Day / Year</option></select>';
   if(D&&Object.keys(D.st).length){
-    h+='<h3>Data health</h3><table class="h"><tr><th>Source</th><th>Check</th><th>Value</th><th>Note</th></tr>'+
+    h+='<h3 style="margin:18px 0 6px">Data health</h3><table class="h"><tr><th>Source</th><th>Check</th><th>Value</th><th>Note</th></tr>'+
       healthRows().map(r=>'<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td class="v">'+esc(r[2])+'</td><td class="n">'+esc(r[3])+'</td></tr>').join('')+'</table>';
   }
   el.innerHTML=h;
 }
-async function handleFile(id,file){
+// list: array of File objects. Cards with multi:true stack the rows of every file; others use the first file only.
+async function handleFile(id,list){
   const def=DEFS.find(d=>d.id===id);
-  S.errors[id]='';S.busy[id]=true;render();
+  let files=Array.from(list||[]);if(!files.length)return;
+  const warns=[];
+  if(!def.multi&&files.length>1){warns.push('This card takes one file. Used only "'+files[0].name+'".');files=files.slice(0,1);}
+  S.errors[id]='';S.warns[id]=[];S.busy[id]=true;renderData();
   await new Promise(r=>setTimeout(r,30));
   try{
-    const text=await file.text();
-    if(text.startsWith('PK'))throw new Error('This looks like an Excel file. Save it as CSV and upload again.');
-    const rows=parseCSV(text);
-    if(rows.length<2)throw new Error('The file has no data rows.');
-    const idx=mapCols(def,rows[0]),out=[];
-    for(let i=1;i<rows.length;i++){const r=rows[i];out.push(def.order.map(k=>idx[k]>=0&&r[idx[k]]!=null?r[idx[k]]:''));}
-    const rec={name:file.name,loadedAt:Date.now(),rows:out,hasQ:idx.qtype>=0};
-    S.files[id]=rec;
+    const out=[],parts=[],failed=[];let hasQ=false;
+    for(const file of files){
+      try{
+        const text=await file.text();
+        if(text.startsWith('PK'))throw new Error('This looks like an Excel file. Save it as CSV and upload again.');
+        const rows=parseCSV(text);
+        if(rows.length<2)throw new Error('The file has no data rows.');
+        const idx=mapCols(def,rows[0]);let n=0;
+        for(let i=1;i<rows.length;i++){
+          const r=rows[i];
+          if(r.every(v=>String(v==null?'':v).trim()===''))continue;
+          out.push(def.order.map(k=>idx[k]>=0&&r[idx[k]]!=null?r[idx[k]]:''));n++;
+        }
+        if(n===0)throw new Error('The file has no data rows.');
+        if(idx.qtype>=0)hasQ=true;
+        parts.push({name:file.name,rows:n});
+        if(def.multi){const blank=def.order.filter(k=>idx[k]<0);if(blank.length)warns.push(file.name+': columns not found, left blank: '+blank.map(k=>def.cols[k][0]).join(', '));}
+      }catch(e){failed.push(file.name+': '+(e.message||String(e)));}
+    }
+    if(!out.length)throw new Error(failed.length?failed.join(' | '):'No data rows were found.');
+    const rec={name:parts.length===1?parts[0].name:parts.length+' files merged',parts,loadedAt:Date.now(),rows:out,hasQ};
+    S.files[id]=rec;   // replaces everything previously loaded for this card
+    S.warns[id]=warns.concat(failed.map(x=>'Skipped '+x));
     const ok=await IDB.set(id,rec);if(ok===null)S.idbOk=false;
-  }catch(e){S.errors[id]=e.message||String(e);}
-  S.busy[id]=false;S.pub={state:'idle',msg:''};recompute();render();
+  }catch(e){S.errors[id]=e.message||String(e);S.warns[id]=[];}
+  S.busy[id]=false;recompute();render();
 }
-async function clearFile(id){delete S.files[id];S.errors[id]='';await IDB.del(id);S.pub={state:'idle',msg:''};recompute();render();}
+async function clearFile(id){delete S.files[id];S.errors[id]='';S.warns[id]=[];await IDB.del(id);recompute();render();}
+
+/* ---------- Shell ---------- */
+const TABS=[['dash','Dashboards'],['detail','Detailed Review']].concat(EMB?[]:[['data','Data']]);
+function renderTabs(){
+  $('#tabs').innerHTML=TABS.map(t=>'<button data-tab="'+t[0]+'" class="'+(S.tab===t[0]?'on':'')+'">'+t[1]+'</button>').join('');
+}
+function htmlBtn(){
+  return EMB?'':'<button class="btn" id="rh" title="Download the dashboards and detailed review as one standalone HTML file with the loaded data embedded"'+(Object.keys(S.files).length?'':' disabled')+'>Export HTML</button>';
+}
+function renderRangeBar(){
+  const bar=$('#rangeBar');
+  if(S.tab==='data'){bar.innerHTML=htmlBtn();return;}
+  const R=curRange();
+  const opts=[['today','Today'],['yesterday','Yesterday'],['last7','Last 7 days'],['last30','Last 30 days'],['month','This month'],['lastmonth','Last month'],['all','All data'],['custom','Custom']];
+  bar.innerHTML='<select id="rp">'+opts.map(o=>'<option value="'+o[0]+'"'+(S.preset===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>'+
+    '<input type="date" id="rf" value="'+R.from+'"><span>to</span><input type="date" id="rt" value="'+R.to+'">'+
+    '<label class="chk"><input type="checkbox" id="rn"'+(S.newest?' checked':'')+'> Newest first</label>'+
+    '<button class="btn" id="rx">Export CSV</button>'+htmlBtn();
+}
+function renderFooter(){
+  const f=$('#foot');
+  const snap=EMB?'Snapshot exported '+fmtDT(EMB.exportedAt)+'. Data: '+DEFS.filter(d=>S.files[d.id]).map(d=>d.label+' ('+S.files[d.id].name+')').join(', ')+'.':'';
+  if(!D||!Object.keys(D.st).length){f.innerHTML=esc(snap);return;}
+  const st=D.st,parts=[];
+  for(const id of ['fresh','qual','td']){const s=st[id];if(s&&!s.skipped)parts.push(DEFS.find(d=>d.id===id).label+' '+nf.format(s.unmapped));}
+  let t='';
+  if(parts.length)t+='Hidden, no matching Meta lead: '+parts.join(' · ')+'.';
+  if(st.leads&&st.leads.invalidPhone)t+=(t?' ':'')+'Meta leads with invalid phone: '+nf.format(st.leads.invalidPhone)+'.';
+  f.innerHTML=(snap?esc(snap)+' ':'')+(t?esc(t)+' ':'')+(EMB?'':'<a data-tab="data">Details in Data tab</a>');
+}
+function render(){
+  if(EMB&&S.tab==='data')S.tab='dash';
+  savePrefs();renderTabs();renderRangeBar();
+  const el=$('#main');
+  if(S.tab==='data'){renderData();}
+  else{
+    const missing=DEFS.filter(d=>['spend','leads'].includes(d.id)&&!S.files[d.id]);
+    const soft=DEFS.filter(d=>['fresh','qual','td'].includes(d.id)&&!S.files[d.id]);
+    let banner='';
+    if(missing.length)banner+='<div class="banner">Missing: '+missing.map(m=>m.label).join(', ')+'.'+(EMB?'':' Load it in the Data tab.')+'</div>';
+    if(S.files.fresh&&!S.files.fresh.hasQ)banner+='<div class="banner">SF Fresh leads has no Quality Type column (or was loaded before this update). Reload it to see Invalid Leads.</div>';
+    if(S.files.gen&&!S.files.gen.hasQ)banner+='<div class="banner">SF Generated has no Quality Type column (or was loaded before this update). Reload it to see Lost and Not Connected.</div>';
+    if(soft.length&&S.files.leads)banner+='<div class="banner">Not loaded: '+soft.map(m=>m.label).join(', ')+'. Rows that depend on them show n/a.</div>';
+    el.innerHTML=banner+'<div id="page"></div>';
+    const page=$('#page',el);
+    if(S.tab==='dash'){
+      page.innerHTML='<div class="tools">'+DASHBOARDS.map(d=>'<button class="pill'+(S.dash===d.id?' on':'')+'" data-dash="'+d.id+'">'+d.title+'</button>').join('')+'</div><div id="dbody"></div>';
+      const body=$('#dbody',page);const dd=DASHBOARDS.find(d=>d.id===S.dash)||DASHBOARDS[0];
+      dd.render(body);page._exp=body;
+    }else{renderDetail(page);page._exp=page;}
+  }
+  renderFooter();
+}
 
 /* ---------- Events ---------- */
+function exportCSV(){
+  const page=$('#page');const src=page&&page._exp;if(!src||!src._export)return;
+  const {name,rows}=src._export();
+  const csv=rows.map(r=>r.map(c=>{c=String(c==null?'':c);return /[",\r\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));a.download=name;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
+/* Export a standalone snapshot: the live app code (CSS + script) is copied as-is, so any feature added
+   to the dashboard or review page is carried over automatically. Data files are embedded as JSON. */
+function exportHTML(){
+  if(!Object.keys(S.files).length)return;
+  const R=curRange(),prefs={};
+  for(const k of PREF_KEYS)prefs[k]=S[k];
+  prefs.preset='custom';prefs.from=R.from;prefs.to=R.to;      // freeze the visible range so the snapshot opens the same way later
+  if(prefs.tab==='data')prefs.tab='dash';
+  const json=JSON.stringify({exportedAt:Date.now(),prefs,files:S.files})
+    .replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+  const css=Array.from(document.querySelectorAll('head style')).map(s=>s.textContent).join('\n');
+  const js=document.getElementById('appjs').textContent.replace(/<\/script/gi,'<\\/script');
+  const html='<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>'+esc(BASE_TITLE)+' - snapshot '+today()+'</title>\n<style>'+css+'</style>\n</head>\n<body>\n'+
+    SHELL+'\n<script type="application/json" id="embeddedData">'+json+'<\/script>\n<script id="appjs">'+js+'<\/script>\n</body>\n</html>\n';
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download='meta-sf-dashboard_snapshot_'+today()+'.html';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
 document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-tab]');if(t){e.preventDefault();S.tab=t.dataset.tab;render();return;}
+  const d=e.target.closest('[data-dash]');if(d){S.dash=d.dataset.dash;render();return;}
   const c=e.target.closest('[data-clear]');if(c){e.preventDefault();clearFile(c.dataset.clear);return;}
-  if(e.target.id==='pubgo'){publish();return;}
-  if(e.target.id==='pubdl'){downloadJSON();return;}
-});
-document.addEventListener('input',e=>{
-  const t=e.target;
-  if(t.id&&t.id.startsWith('cfg_')&&t.type!=='checkbox'){S.cfg[t.id.slice(4)]=t.value;savePrefs();}
+  if(e.target.id==='rx')exportCSV();
+  if(e.target.id==='rh')exportHTML();
 });
 document.addEventListener('change',e=>{
   const t=e.target;
-  if(t.matches('input[type=file][data-id]')){if(t.files[0])handleFile(t.dataset.id,t.files[0]);t.value='';return;}
-  if(t.id==='cfg_remember'){S.cfg.remember=t.checked;savePrefs();return;}
-  if(t.id==='dmy'){S.dmy=t.value==='1';S.pub={state:'idle',msg:''};recompute();render();return;}
+  if(t.matches('input[type=file][data-id]')){const fl=Array.from(t.files||[]);if(fl.length)handleFile(t.dataset.id,fl);t.value='';return;}
+  if(t.id==='rp'){S.preset=t.value;if(t.value==='custom'){const R=curRange();S.from=R.from;S.to=R.to;}render();return;}
+  if(t.id==='rf'||t.id==='rt'){if(!$('#rf').value||!$('#rt').value)return;S.preset='custom';S.from=$('#rf').value;S.to=$('#rt').value;render();return;}
+  if(t.id==='rn'){S.newest=t.checked;render();return;}
+  if(t.id==='dmy'){S.dmy=t.value==='1';recompute();render();return;}
 });
 document.addEventListener('dragover',e=>{const z=e.target.closest('.drop');if(z){e.preventDefault();z.classList.add('over');}});
 document.addEventListener('dragleave',e=>{const z=e.target.closest('.drop');if(z)z.classList.remove('over');});
-document.addEventListener('drop',e=>{const z=e.target.closest('.drop');if(z){e.preventDefault();z.classList.remove('over');if(e.dataTransfer.files[0])handleFile(z.dataset.id,e.dataTransfer.files[0]);}});
+document.addEventListener('drop',e=>{const z=e.target.closest('.drop');if(z){e.preventDefault();z.classList.remove('over');const fl=Array.from(e.dataTransfer.files||[]);if(fl.length)handleFile(z.dataset.id,fl);}});
 
 /* ---------- Boot ---------- */
 (async function(){
   loadPrefs();
-  S.idbOk=await IDB.open();
-  if(S.idbOk){for(const def of DEFS){const rec=await IDB.get(def.id);if(rec&&rec.rows)S.files[def.id]=rec;}}
+  if(EMB){S.files=EMB.files||{};S.idbOk=true;}      // snapshot: data comes from the file itself, no browser storage
+  else{
+    S.idbOk=await IDB.open();
+    if(S.idbOk){for(const def of DEFS){const rec=await IDB.get(def.id);if(rec&&rec.rows)S.files[def.id]=rec;}}
+  }
   recompute();
+  if(!EMB&&!S.files.spend&&!S.files.leads)S.tab='data';
   render();
-  window.__admin={S,get D(){return D;},compute,buildPayload,parseDT,cleanPhone,parseCSV};
+  window.__app={S,get D(){return D;},compute,parseDT,cleanPhone,parseCSV};
 })();
 })();
 </script>
